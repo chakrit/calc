@@ -2,16 +2,18 @@ package main
 
 import "fmt"
 import "os"
+import "bufio"
 
 func main() {
 	lines := make(chan string)
 	results := parse(lines)
 
 	go func() {
-		var e error
-		for line := "0"; line != "q"; _, e = fmt.Scanln(&line) {
-			noe(e)
-			lines <- line
+		defer close(lines)
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			lines <- scanner.Text()
+			noe(scanner.Err())
 		}
 	}()
 

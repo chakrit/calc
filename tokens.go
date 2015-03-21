@@ -18,15 +18,15 @@ func (t *token) String() string {
 	msg := ""
 	switch t.tokenType {
 	case typeNum:
-		msg = "NUM"
+		msg = "num"
 	case typeOp:
-		msg = "OP "
+		msg = "op"
 	case typeLeftParen:
-		msg = "P( "
+		msg = "lparen"
 	case typeRightParen:
-		msg = "P) "
+		msg = "rparen"
 	}
 
-	msg += " " + t.text
+	msg = msg + "(" + t.text + ")"
 	return msg
 }

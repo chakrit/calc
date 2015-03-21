@@ -7,7 +7,7 @@ func compile(tokens <-chan *token) string {
 	n, op := 0, ""
 
 	for token := range tokens {
-		fmt.Println(token)
+		fmt.Print(token, " ")
 
 		switch token.tokenType {
 		case typeNum:

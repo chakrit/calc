@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func parseMain(line string) string {
 	context := newContext(line)
 
@@ -11,7 +13,9 @@ func parseMain(line string) string {
 		}
 	}()
 
-	return compile(context.tokens)
+	result := compile(context.tokens)
+	fmt.Println()
+	return result
 }
 
 type parseFunc func(c *context) parseFunc
