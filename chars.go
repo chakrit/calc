@@ -1,26 +1,23 @@
 package main
 
-type class int
+func isNumber(r rune) bool {
+	return '0' <= r && r <= '9'
+}
 
-const (
-	classNum class = iota
-	classOp
-	classWhite
-	classEOF
-)
-
-func classOf(r rune) class {
+func isOp(r rune) bool {
 	switch r {
-	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-		return classNum
 	case '+', '-', '*', '/':
-		return classOp
-	case ' ', '\r', '\n':
-		return classWhite
-	case rune(0):
-		return classEOF
-	default:
-		// ERROR!
-		return classEOF
+		return true
 	}
+
+	return false
+}
+
+func isWhitespace(r rune) bool {
+	switch r {
+	case ' ', '\r', '\n':
+		return true
+	}
+
+	return false
 }

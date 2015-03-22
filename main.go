@@ -19,7 +19,7 @@ func main() {
 
 	for result := range results {
 		fmt.Println()
-		fmt.Println("result = ", result)
+		fmt.Println("result =", result)
 	}
 
 	fmt.Println("done.")

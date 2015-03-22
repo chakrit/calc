@@ -17,26 +17,24 @@ func lexMain(line string) chan *token {
 type lexFunc func(c *context) lexFunc
 
 func lexStart(c *context) lexFunc {
-	switch classOf(c.peek()) {
-	case classNum:
-		return lexNum
-	case classOp:
-		return lexOp
-	case classWhite:
+	r := c.peek()
+	switch {
+	case isWhitespace(r):
 		c.consume()
-		return lexStart
-
-		// TODO: lexer error
-	case classEOF:
-		return nil
-	default:
+	case isNumber(r):
+		return lexNum
+	case isOp(r):
+		return lexOp
+	case r == rune(0):
 		return nil
 	}
+
+	return lexStart
 }
 
 func lexNum(c *context) lexFunc {
 	numStr := ""
-	for r := c.consume(); classOf(r) == classNum; r = c.consume() {
+	for r := c.consume(); isNumber(r); r = c.consume() {
 		numStr += string(r)
 	}
 
@@ -46,7 +44,7 @@ func lexNum(c *context) lexFunc {
 }
 
 func lexOp(c *context) lexFunc {
-	if r := c.consume(); classOf(r) == classOp {
+	if r := c.consume(); isOp(r) {
 		c.emit(&token{typeOp, string(r)})
 	} else {
 		c.backtrack()
