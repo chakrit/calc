@@ -6,7 +6,6 @@ import "bufio"
 type context struct {
 	scanner io.RuneScanner
 	tokens  chan *token
-	result  int
 	isEOF   bool
 }
 
@@ -14,7 +13,6 @@ func newContext(reader io.Reader) *context {
 	c := &context{
 		scanner: bufio.NewReader(reader),
 		tokens:  make(chan *token, 32),
-		result:  0,
 		isEOF:   false,
 	}
 	return c
