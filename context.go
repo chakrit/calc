@@ -1,21 +1,21 @@
 package main
 
 import "io"
-import "strings"
+import "bufio"
 
 type context struct {
-	*strings.Reader
-	tokens chan *token
-	result int
-	isEOF  bool
+	scanner io.RuneScanner
+	tokens  chan *token
+	result  int
+	isEOF   bool
 }
 
-func newContext(line string) *context {
+func newContext(reader io.Reader) *context {
 	c := &context{
-		Reader: strings.NewReader(line),
-		tokens: make(chan *token, 32),
-		result: 0,
-		isEOF:  false,
+		scanner: bufio.NewReader(reader),
+		tokens:  make(chan *token, 32),
+		result:  0,
+		isEOF:   false,
 	}
 	return c
 }
@@ -39,7 +39,7 @@ func (c *context) peek() rune {
 }
 
 func (c *context) consume() rune {
-	r, _, e := c.Reader.ReadRune()
+	r, _, e := c.scanner.ReadRune()
 	if e == io.EOF {
 		c.isEOF = true
 		return rune(0)
@@ -51,5 +51,5 @@ func (c *context) consume() rune {
 }
 
 func (c *context) backtrack() {
-	c.Reader.UnreadRune()
+	c.scanner.UnreadRune()
 }

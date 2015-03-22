@@ -1,7 +1,9 @@
 package main
 
-func lexMain(line string) chan *token {
-	context := newContext(line)
+import "io"
+
+func lex(input io.Reader) chan *token {
+	context := newContext(input)
 
 	go func() {
 		defer context.done()

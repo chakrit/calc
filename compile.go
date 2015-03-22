@@ -1,38 +1,42 @@
 package main
 
-import "fmt"
 import "strconv"
 
-func compile(tokens <-chan *token) string {
-	n, op := 0, ""
+func compile(tokens <-chan *token) <-chan string {
+	result := make(chan string)
 
-	for token := range tokens {
-		fmt.Print(token, " ")
+	go func() {
+		defer close(result)
+		n, op := 0, ""
 
-		switch token.tokenType {
-		case typeNum:
-			num, e := strconv.Atoi(token.text)
-			noe(e)
+		for token := range tokens {
+			switch token.tokenType {
+			case typeNum:
+				num, e := strconv.Atoi(token.text)
+				noe(e)
 
-			if op != "" {
-				switch op {
-				case "+":
-					num = n + num
-				case "-":
-					num = n - num
-				case "*":
-					num = n * num
-				case "/":
-					num = n / num
+				if op != "" {
+					switch op {
+					case "+":
+						num = n + num
+					case "-":
+						num = n - num
+					case "*":
+						num = n * num
+					case "/":
+						num = n / num
+					}
+					op = ""
 				}
-				op = ""
+
+				n = num
+			case typeOp:
+				op = token.text
 			}
-
-			n = num
-		case typeOp:
-			op = token.text
 		}
-	}
 
-	return strconv.Itoa(n)
+		result <- strconv.Itoa(n)
+	}()
+
+	return result
 }
