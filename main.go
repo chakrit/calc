@@ -1,13 +1,17 @@
 package main
 
+import "io"
 import "fmt"
 import "os"
 
 const DEBUG = false
 
 func main() {
-	result := compile(parse(lex(os.Stdin)))
-	fmt.Fprintln(os.Stdout, result)
+	run(os.Stdin, os.Stdout)
+}
+
+func run(input io.Reader, output io.Writer) {
+	fmt.Fprintln(output, compile(parse(lex(input))))
 }
 
 func noe(e error) {
