@@ -1,42 +1,34 @@
 package main
 
+import "fmt"
 import "strconv"
 
-func compile(tokens <-chan *token) <-chan string {
-	result := make(chan string)
+func compile(root node) string {
+	if DEBUG {
+		fmt.Println(root)
+	}
 
-	go func() {
-		defer close(result)
-		n, op := 0, ""
+	n := compileArithmetic(root.(*rootNode).root)
+	return strconv.Itoa(n)
+}
 
-		for token := range tokens {
-			switch token.tokenType {
-			case typeNum:
-				num, e := strconv.Atoi(token.text)
-				noe(e)
-
-				if op != "" {
-					switch op {
-					case "+":
-						num = n + num
-					case "-":
-						num = n - num
-					case "*":
-						num = n * num
-					case "/":
-						num = n / num
-					}
-					op = ""
-				}
-
-				n = num
-			case typeOp:
-				op = token.text
-			}
+func compileArithmetic(node interface{}) int {
+	switch n := node.(type) {
+	case *numberNode:
+		return n.n
+	case *arithmeticNode:
+		l, r := compileArithmetic(n.lchild), compileArithmetic(n.rchild)
+		switch n.op {
+		case "+":
+			return l + r
+		case "-":
+			return l - r
+		case "*":
+			return l * r
+		case "/":
+			return l / r
 		}
+	}
 
-		result <- strconv.Itoa(n)
-	}()
-
-	return result
+	panic("bad parse.")
 }

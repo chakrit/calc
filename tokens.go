@@ -5,8 +5,8 @@ type tokenType int
 const (
 	typeNum tokenType = iota
 	typeOp
-	typeLeftParen
-	typeRightParen
+	typeLParen
+	typeRParen
 )
 
 type token struct {
@@ -21,9 +21,9 @@ func (t *token) String() string {
 		msg = "num"
 	case typeOp:
 		msg = "op"
-	case typeLeftParen:
+	case typeLParen:
 		msg = "lparen"
-	case typeRightParen:
+	case typeRParen:
 		msg = "rparen"
 	}
 

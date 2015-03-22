@@ -3,11 +3,11 @@ package main
 import "fmt"
 import "os"
 
+const DEBUG = false
+
 func main() {
-	results := compile(lex(os.Stdin))
-	for result := range results {
-		fmt.Fprintln(os.Stdout, result)
-	}
+	result := compile(parse(lex(os.Stdin)))
+	fmt.Fprintln(os.Stdout, result)
 }
 
 func noe(e error) {

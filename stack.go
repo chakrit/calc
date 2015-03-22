@@ -1,5 +1,8 @@
 package main
 
+import "fmt"
+import "strings"
+
 type stack struct {
 	items []*token
 }
@@ -29,4 +32,13 @@ func (s *stack) pop() *token {
 	result := s.items[idx]
 	s.items = s.items[:idx]
 	return result
+}
+
+func (s *stack) String() string {
+	strs := make([]string, len(s.items))
+	for i, item := range s.items {
+		strs[i] = fmt.Sprint(item)
+	}
+
+	return "stack{" + strings.Join(strs, ", ") + "}"
 }
