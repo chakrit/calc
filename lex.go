@@ -27,6 +27,12 @@ func lexStart(c *context) lexFunc {
 		return lexNum
 	case isOp(r):
 		return lexOp
+	case r == '(':
+		c.consume()
+		c.emit(&token{typeLParen, "("})
+	case r == ')':
+		c.consume()
+		c.emit(&token{typeRParen, ")"})
 	case r == rune(0):
 		return nil
 	}
