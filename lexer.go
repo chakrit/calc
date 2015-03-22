@@ -1,36 +1,32 @@
 package main
 
-import "fmt"
-
-func parseMain(line string) string {
+func lexMain(line string) chan *token {
 	context := newContext(line)
 
 	go func() {
 		defer context.done()
-		f := parseFunc(parseStart)
+		f := lexFunc(lexStart)
 		for f != nil {
 			f = f(context)
 		}
 	}()
 
-	result := compile(context.tokens)
-	fmt.Println()
-	return result
+	return context.tokens
 }
 
-type parseFunc func(c *context) parseFunc
+type lexFunc func(c *context) lexFunc
 
-func parseStart(c *context) parseFunc {
+func lexStart(c *context) lexFunc {
 	switch classOf(c.peek()) {
 	case classNum:
-		return parseNum
+		return lexNum
 	case classOp:
-		return parseOp
+		return lexOp
 	case classWhite:
 		c.consume()
-		return parseStart
+		return lexStart
 
-		// TODO: Parser error
+		// TODO: lexer error
 	case classEOF:
 		return nil
 	default:
@@ -38,7 +34,7 @@ func parseStart(c *context) parseFunc {
 	}
 }
 
-func parseNum(c *context) parseFunc {
+func lexNum(c *context) lexFunc {
 	numStr := ""
 	for r := c.consume(); classOf(r) == classNum; r = c.consume() {
 		numStr += string(r)
@@ -46,10 +42,10 @@ func parseNum(c *context) parseFunc {
 
 	c.backtrack() // last token is non-num
 	c.emit(&token{typeNum, numStr})
-	return parseStart
+	return lexStart
 }
 
-func parseOp(c *context) parseFunc {
+func lexOp(c *context) lexFunc {
 	if r := c.consume(); classOf(r) == classOp {
 		c.emit(&token{typeOp, string(r)})
 	} else {
@@ -57,5 +53,5 @@ func parseOp(c *context) parseFunc {
 		// TODO: ERROR
 	}
 
-	return parseStart
+	return lexStart
 }

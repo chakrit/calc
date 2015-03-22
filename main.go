@@ -18,7 +18,8 @@ func main() {
 	}()
 
 	for result := range results {
-		fmt.Println(result)
+		fmt.Println()
+		fmt.Println("result = ", result)
 	}
 
 	fmt.Println("done.")
@@ -30,7 +31,7 @@ func parse(lines <-chan string) <-chan string {
 	go func() {
 		defer close(result)
 		for line := range lines {
-			result <- parseMain(line)
+			result <- compile(lexMain(line))
 		}
 	}()
 
